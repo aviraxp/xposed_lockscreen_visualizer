@@ -211,10 +211,14 @@ public class SettingsActivity extends PreferenceActivity
             }
 
             xposedStatus.setOnPreferenceClickListener((view) -> {
-                Intent i = new Intent(Intent.ACTION_MAIN);
-                i.setPackage("de.robv.android.xposed.installer");
-                i.putExtra("section", "modules");
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                Intent i = new Intent("de.robv.android.xposed.installer.OPEN_SECTION");
+                if (getPackageManager().queryIntentActivities(i, 0).isEmpty()) {
+                    i = getPackageManager().getLaunchIntentForPackage("de.robv.android.xposed.installer");
+                }
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .putExtra("section", "modules")
+                        .putExtra("fragment", 1)
+                        .putExtra("module", BuildConfig.APPLICATION_ID);
                 startActivity(i);
                 return true;
             });
